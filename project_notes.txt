@@ -1,0 +1,21 @@
+to make it work on android
+
+-- instal cocoa pods
+
+-- add this to project build gradle
+
+allprojects {
+    // ...
+    configurations.all {
+        resolutionStrategy {
+            dependencySubstitution {
+                substitute module('com.facebook.react:react-native') with project(':ReactAndroid')
+            }
+        }
+    }
+}
+  
+-- then update react-native go to project root directory and put this
+
+react-native upgrade
+

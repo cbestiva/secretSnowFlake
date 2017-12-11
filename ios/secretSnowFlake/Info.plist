@@ -12,6 +12,12 @@
 	<string>org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+    <key>NSCameraUsageDescription</key>
+    <string>We are accessing your camera to take a photo</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>We use this to add photos to your photo library</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We use this to look for pictures in your photo library</string>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
