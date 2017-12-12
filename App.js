@@ -11,16 +11,20 @@ import {
   Text,
   View,
   AppRegistry,
-  Button
+  Button,
+  TouchableWithoutFeedback,
+  Keyboard
 } from 'react-native';
 import MainNavigator from './Navigator'
 
 export default class secretSnowFlake extends Component {
   render() {
     return (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
         <MainNavigator />
       </View>
+      </TouchableWithoutFeedback>
     );
   }
 }

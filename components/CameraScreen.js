@@ -22,6 +22,8 @@ export default class SignInScreen extends Component {
   }
   
   render() {
+    const { state } = this.props.navigation
+    console.log('GAME INFO = ', state.params.game, state.params.player, state.params.numOfPlayers)
     return(
       <View style={styles.container}>
         <Text style={styles.title}>
