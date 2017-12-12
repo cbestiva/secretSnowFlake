@@ -19,3 +19,15 @@ allprojects {
 
 react-native upgrade
 
+-- cleaned theh repository
+
+watchman watch-del-all
+rm -rf node_modules
+rm -rf $TMPDIR/react-*
+yarn cache clean
+brew update
+brew upgrade
+yarn
+
+-- then opened the android folder in Android Studio and let it build and run
+
