@@ -6,10 +6,19 @@ import {
   View,
   Button
 } from 'react-native';
+import ImagePicker from 'react-native-image-crop-picker';
 
 export default class SignInScreen extends Component {
   static navigationOptions = {
     title: 'Camera'
+  }
+  
+  openPicker() {
+    ImagePicker.openCamera({
+      width: 300,
+      height: 300,
+      cropping: true
+    })
   }
   
   render() {
@@ -18,6 +27,10 @@ export default class SignInScreen extends Component {
         <Text style={styles.title}>
           Camera Screen
         </Text>
+        <Button
+          onPress={ () => this.openPicker() }
+          title='Add Photo'
+        />
         <Button
           style={styles.title}
           onPress={() => this.props.navigation.navigate('Players')}

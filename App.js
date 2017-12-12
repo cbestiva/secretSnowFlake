@@ -14,24 +14,12 @@ import {
   Button
 } from 'react-native';
 import MainNavigator from './Navigator'
-import ImagePicker from 'react-native-image-crop-picker';
 
 export default class secretSnowFlake extends Component {
-  openPicker(){
-  ImagePicker.openCamera({
-    width: 300,
-    height: 300,
-    cropping: true
-  })
-}
   render() {
     return (
       <View style={styles.container}>
         <MainNavigator />
-        <Button
-          onPress={ () => this.openPicker() }
-          title={ "Change Picture"}
-        />
       </View>
     );
   }
