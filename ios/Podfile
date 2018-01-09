@@ -10,4 +10,6 @@ target 'secretSnowFlake' do
   pod 'RSKImageCropper'
   pod 'QBImagePickerController'
 
+  pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
+
 end
