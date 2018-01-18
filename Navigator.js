@@ -11,6 +11,7 @@ import CreateGameScreen from './components/CreateGameScreen';
 import JoinGameScreen from './components/JoinGameScreen';
 import CameraScreen from './components/CameraScreen';
 import PlayersScreen from './components/PlayersScreen';
+import Reveal from './components/RevealScreen'
 
 const MainNavigator = StackNavigator({
   Home: {
@@ -22,13 +23,13 @@ const MainNavigator = StackNavigator({
   CreateGame: {
     screen: CreateGameScreen,
     navigationOptions: {
-      headerTitle: 'CreateGame'
+      headerTitle: 'Create Game'
     }
   },
   JoinGame: {
     screen: JoinGameScreen,
     navigationOptions: {
-      headerTitle: 'JoinGame'
+      headerTitle: 'Join Game'
     }
   },
   Camera: {
@@ -40,7 +41,13 @@ const MainNavigator = StackNavigator({
   Players: {
     screen: PlayersScreen,
     navigationOptions: {
-      headerTitle: 'Players'
+      headerTitle: 'Waiting Room'
+    }
+  },
+  Reveal: {
+    screen: Reveal,
+    navigationOptions: {
+      headerTitle: 'Your Role'
     }
   }
 });

@@ -9,18 +9,30 @@ import {
   Picker
 } from 'react-native';
 
+import * as firebase from 'firebase';
+import FirebaseApp from '../FirebaseApp';
+
 export default class CreateGameScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       room: '',
       name: '',
+      charsString: '',
+      missions: '',
       numOfPlayers: '5'
+      
     };
+    
+    this.itemsRef = this.getRef().child('states')
   }
   
   static navigationOptions = {
     title: 'CreateGame'
+  }
+  
+  getRef(){
+    return FirebaseApp.database().ref();
   }
   
   createGame(e) {
@@ -28,12 +40,47 @@ export default class CreateGameScreen extends Component {
     // Add Game Room and player to firebase
     
     // Navigate to CameraScreen w/ game info params
+    switch(this.state.numOfPlayers){
+      case '5':
+          this.state.charsString = '0,0,1,1,1'
+          this.state.missions = '2,3,2,3,3'
+          break;
+      case '6':
+          this.state.charsString = '0,0,1,1,1,1'
+          this.state.missions = '2,3,4,3,4'
+          break;
+      case '7':
+          this.state.charsString = '0,0,0,1,1,1,1'
+          this.state.missions = '2,3,3,4*,4'
+          break;
+      case '8':
+          this.state.charsString = '0,0,0,1,1,1,1,1'
+          this.state.missions = '3,4,4,5*,5'
+          break;
+      case '9':
+          this.state.charsString = '0,0,0,1,1,1,1,1,1'
+          this.state.missions = '3,4,4,5*,5'
+          break;
+      case '10':
+          this.state.charsString = '0,0,0,0,1,1,1,1,1,1'
+          this.state.missions = '3,4,4,5*,5'
+          break;
+    }
+//     alert(this.state.charsString + ' ' + this.state.missions)
+    this.itemsRef.child(`${this.state.room}`).set({
+      charsString: `${this.state.charsString}`,
+      missions: `${this.state.missions}`,
+      players: `${this.state.numOfPlayers}`
+    })
+    this.itemsRef.child(`${this.state.room}/readyFlag`).set({
+      val: 0
+    })
     this.props.navigation.navigate(
       'Camera', 
       {
         game: this.state.room, 
         player: this.state.name,
-        numOfPlayers: this.state.numOfPlayers
+        creator: 1
       }
     )
   }
@@ -98,7 +145,7 @@ const styles = StyleSheet.create({
     margin: 10
   },
   input: {
-    height: 50,
+    height: 30,
     width: 150,
     borderColor: 'gray',
     borderWidth: 1,

@@ -17,7 +17,8 @@ export default class SignInScreen extends Component {
     super(props);
     this.state = {
       imageUrl: '',
-      showLoader: false
+      showLoader: false,
+      creator: this.props.navigation.state.params.creator
     }
     
     this.itemsRef = this.getRef().child('photos')
@@ -31,12 +32,12 @@ export default class SignInScreen extends Component {
     return FirebaseApp.database().ref();
   }
   
-  openPicker(game, player) {
+  openPicker(game, player, creator) {
     const Blob = RNFetchBlob.polyfill.Blob
     const fs = RNFetchBlob.fs
     window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
     window.Blob = Blob
-    
+
     ImagePicker.openCamera({
       width: 300,
       height: 300,
@@ -71,7 +72,9 @@ export default class SignInScreen extends Component {
         this.props.navigation.navigate(
       'Players', 
       {
-        gameName: `${game}`
+        gameName: `${game}`,
+        creator: `${creator}`,
+        player: `${player}`
       })
         Vibration.vibrate()
       })
@@ -82,23 +85,25 @@ export default class SignInScreen extends Component {
   
   render() {
     const { state } = this.props.navigation
-    console.log('GAME INFO = ', state.params.game, state.params.player, state.params.numOfPlayers)
+    console.log('GAME INFO = ', state.params.game, state.params.player)
     return(
       <View style={styles.container}>
         <Text style={styles.title}>
           Camera Screen
         </Text>
         <Button
-          onPress={ () => this.openPicker(state.params.game, state.params.player) }
+          onPress={ () => this.openPicker(state.params.game, state.params.player, state.params.creator) }
           title='Add Photo'
         />
         <Button
           style={styles.title}
-          onPress={() => 
+          onPress={() =>
       
           this.props.navigation.navigate('Players',
           {
-            gameName: state.params.game
+            gameName: state.params.game,
+            creator: state.params.creator,
+            player: state.params.player
           })}
           title='Play'
         />
