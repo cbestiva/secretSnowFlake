@@ -113,7 +113,13 @@ export default class RevealScreen extends Component {
   }
   
   render() {
-    const waitingButton = ( <Button title="Play"/>)
+    const playButton = ( <Button title="Play"
+                              onPress={() => this.props.navigation.navigate('Choosing', 
+      {
+        gameName: this.state.gameName, 
+        player: this.state.playerName
+      }
+                                                       )}/>)
     const headerTitle = this.state.good == 1 ? (<Text style={styles.title}>
           You're Good
         </Text>) 
@@ -128,7 +134,7 @@ export default class RevealScreen extends Component {
         <ListView
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}/>
-        { waitingButton }
+        { playButton }
       </View>
     )
   }

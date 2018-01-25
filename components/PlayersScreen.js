@@ -150,7 +150,7 @@ componentWillMount() {
     console.log(photo)
     console.log(`${this.state.gameName}/photo.name`)
   this.itemsRef.child(`${this.state.gameName}/`+photo.name).remove();
-}
+  }
   
   showChildrenCount(item){
     const db = FirebaseApp.database()
@@ -166,6 +166,7 @@ componentWillMount() {
     let rolesArray = this.state.rolesArray
     let photosArray = this.state.photos
     let playersArray = []
+    let mixedPlayers = []
     // get the players array
 //     alert(playersArray[0].name)
     for(i=0;i<photosArray.length;i++){
@@ -190,9 +191,30 @@ componentWillMount() {
        role: `${roleVal}`
     })
       }
+      
+      while (playersArray.length > 0){
+//       mixedArray.push(rolesArray.splice(Math.floor(Math.random() * rolesArray.length),1), playersArray.splice(Math.floor(Math.random() * playersArray.length),1).name)
+      mixedPlayers.push(playersArray.splice(Math.floor(Math.random() * playersArray.length),1))
+      }
+      
+      this.stateRef.child(`${this.state.gameName}/missionChooser`).set({
+       key: 0,
+       val: `${mixedPlayers[0]}`,
+       missionNumber: 0
+    })
+      
+      this.stateRef.child(`${this.state.gameName}/orderList`).set({
+       val: `${mixedPlayers.join()}`
+    })
+      
       this.stateRef.child(`${this.state.gameName}/readyFlag`).set({
        val: 1
     })
+      
+      this.stateRef.child(`${this.state.gameName}/selectionReady`).set({
+       val: 0
+    })
+      
     }
 //     alert(mixedArray+ ' ' + `${this.state.creator}`)
   }

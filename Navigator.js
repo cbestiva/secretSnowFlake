@@ -11,7 +11,8 @@ import CreateGameScreen from './components/CreateGameScreen';
 import JoinGameScreen from './components/JoinGameScreen';
 import CameraScreen from './components/CameraScreen';
 import PlayersScreen from './components/PlayersScreen';
-import Reveal from './components/RevealScreen'
+import Reveal from './components/RevealScreen';
+import Choosing from './components/ChoosingScreen';
 
 const MainNavigator = StackNavigator({
   Home: {
@@ -48,6 +49,12 @@ const MainNavigator = StackNavigator({
     screen: Reveal,
     navigationOptions: {
       headerTitle: 'Your Role'
+    }
+  },
+  Choosing: {
+    screen: Choosing,
+    navigationOptions: {
+      headerTitle: 'Players for Mission'
     }
   }
 });
