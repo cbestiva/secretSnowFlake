@@ -281,7 +281,7 @@ componentWillMount() {
     ))
     :
     (
-    <Button title={"Waiting for More Players"}>
+    <Button title={"Waiting for More Players"} onPress={()=>{}}>
       </Button>
     )
     return(

@@ -70,7 +70,8 @@ export default class CreateGameScreen extends Component {
     this.itemsRef.child(`${this.state.room}`).set({
       charsString: `${this.state.charsString}`,
       missions: `${this.state.missions}`,
-      players: `${this.state.numOfPlayers}`
+      players: `${this.state.numOfPlayers}`,
+      creatorName: `${this.state.name}`
     })
     this.itemsRef.child(`${this.state.room}/readyFlag`).set({
       val: 0
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
     margin: 10
   },
   input: {
-    height: 30,
+    height: 50,
     width: 150,
     borderColor: 'gray',
     borderWidth: 1,

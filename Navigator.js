@@ -13,6 +13,7 @@ import CameraScreen from './components/CameraScreen';
 import PlayersScreen from './components/PlayersScreen';
 import Reveal from './components/RevealScreen';
 import Choosing from './components/ChoosingScreen';
+import Approval from './components/ApprovalScreen';
 
 const MainNavigator = StackNavigator({
   Home: {
@@ -55,6 +56,12 @@ const MainNavigator = StackNavigator({
     screen: Choosing,
     navigationOptions: {
       headerTitle: 'Players for Mission'
+    }
+  },
+  Approval: {
+    screen: Approval,
+    navigationOptions: {
+      headerTitle: 'Approvals and Rejections'
     }
   }
 });

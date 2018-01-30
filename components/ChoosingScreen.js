@@ -28,7 +28,10 @@ export default class ChoosingScreen extends Component {
       dataSource2: ds2,
       gameName: this.props.navigation.state.params.gameName,
       chooser: 0,
-      missionTotal: null
+      missionTotal: null,
+      ready: 0,
+      missionNumber: null,
+      readyLabel: ''
     }
     this.itemsRef = this.getRef().child('photos')
     this.stateRef = this.getRef().child('states')
@@ -45,12 +48,20 @@ export default class ChoosingScreen extends Component {
   }
   
   componentWillMount() {
+    
+    this.stateRef.child(`${this.state.gameName}/selectionReady/val`).on("value", (snapshot) =>{
+      this.setState({
+        ready: snapshot.val()
+      })
+    })
+                                                              
     this.stateRef.child(`${this.state.gameName}/missions`).on("value", (snapshot) =>{
       let missions = snapshot.val().split()
       let missionNumber
       this.stateRef.child(`${this.state.gameName}/missionChooser/missionNumber`).on("value", (snapshot2) =>{
         missionNumber = snapshot2.val()
         this.setState({
+          missionNumber: missionNumber,
           missionTotal: missions[0][missionNumber][0]
         })
       })
@@ -80,6 +91,11 @@ export default class ChoosingScreen extends Component {
     (errObj) => console.log('The read failed: ', errObj.code)
          )
         }else{
+          
+          this.setState({
+            chooser: 0
+          })
+          
           this.itemsRef.child(this.state.gameName).on('value', (snapshot) => {
     let dataArray = [];
     snapshot.forEach((child) => {
@@ -118,7 +134,6 @@ export default class ChoosingScreen extends Component {
   },
     (errObj) => console.log('The read failed: ', errObj.code)
          )
-    
 }
   
   chooseVoter(photoName, photoImage){
@@ -134,19 +149,79 @@ export default class ChoosingScreen extends Component {
   }
   
   lockInPicks(){
+    // add logic that makes it do this only if they're the chooser
+    if(this.state.chooser==1){
         this.stateRef.child(`${this.state.gameName}/voters`).on('value', (snapshot) =>{ 
        if(this.state.missionTotal == snapshot.numChildren()){
-          alert('Ready to Go!')
-          this.stateRef.child(`${this.state.gameName}/selectionReady`).set({
-           val: 1
+         this.setState({
+           readyLabel: 'Ready to Go!'
          })
+        this.setState({
+          ready: 1
+        })
        }else{
-         alert('Need ' +this.state.missionTotal+' voters selected')
+         this.setState({
+           readyLabel:`Need ${this.state.missionTotal} voters selected chooser flag ${this.state.chooser}`
+         })
          this.stateRef.child(`${this.state.gameName}/selectionReady`).set({
            val: 0
          })
        }
+        // change missionChooserParams to next key and next val  
     })
+    }
+  }
+  
+  goToApproval(){
+    this.itemsRef.child(`${this.state.gameName}/${this.state.playerName}/img`).on('value', (snapshot) =>{
+      this.stateRef.child(`${this.state.gameName}/votersApproval/approve/${this.state.playerName}`).set({
+           img: snapshot.val()
+         })
+      })
+   this.stateRef.child(`${this.state.gameName}/selectionReady`).set({
+           val: 1
+         })
+    this.setState({
+      chooser: 0
+    })
+     this.props.navigation.navigate('Approval',
+          {
+          gameName: this.state.gameName,
+          player: this.state.playerName,
+          missionNumber: this.state.missionNumber
+          }                            
+          )
+    
+  }
+  
+  approveVoters(){
+    this.itemsRef.child(`${this.state.gameName}/${this.state.playerName}/img`).on('value', (snapshot) =>{
+      this.stateRef.child(`${this.state.gameName}/votersApproval/approve/${this.state.playerName}`).set({
+           img: snapshot.val()
+         })
+    })
+    
+    this.props.navigation.navigate('Approval',
+          {
+            gameName: this.state.gameName,
+            player: this.state.playerName,
+          missionNumber: this.state.missionNumber
+          })
+  }
+  
+    rejectVoters(){
+      this.itemsRef.child(`${this.state.gameName}/${this.state.playerName}/img`).on('value', (snapshot) =>{
+      this.stateRef.child(`${this.state.gameName}/votersApproval/reject/${this.state.playerName}`).set({
+           img: snapshot.val()
+         })
+    })
+      
+    this.props.navigation.navigate('Approval',
+          {
+            gameName: this.state.gameName,
+            player: this.state.playerName,
+          missionNumber: this.state.missionNumber
+          })
   }
   
   renderRow(rowData: Array<View>, sectionId: string, rowId: string) {
@@ -198,24 +273,48 @@ export default class ChoosingScreen extends Component {
   }
   
   render() {
-    const headerTitle = this.state.chooser == 1 ? 
-      (<View style={styles.container}>
+    const headerTitle = this.state.chooser == 1 ?
+      ( this.state.ready == 0 ?  
+       (<View>
         <Text style={styles.title}>
-          Choose {this.state.missionTotal} people for the mission
+          Choose {this.state.missionTotal} people for the mission {this.state.playerName}
+          {"\n"}{this.state.readyLabel}
         </Text>
-        <ListView dataSource={this.state.dataSource} renderRow={this.renderRow}/>
-        <ListView dataSource={this.state.dataSource2} renderRow={this.renderRow2}/>
+        <ListView dataSource={this.state.dataSource} renderRow={this.renderRow} enableEmptySections={true}/>
+        <ListView dataSource={this.state.dataSource2} renderRow={this.renderRow2} enableEmptySections={true}/>
+          
           <Button title="Finalize" onPress={ () => {this.lockInPicks()}} />
       </View>) 
       :
-      (<View style={styles.container}>
+      (
+      <View>
         <Text style={styles.title}>
-          Approve or Reject these Voters
+          Choose {this.state.missionTotal} people for the mission {this.state.playerName}
+          {"\n"}{this.state.readyLabel}
         </Text>
-        <ListView dataSource={this.state.dataSource2} renderRow={this.renderRow2}/>
-          <Button title="Approve"/><Button title="Reject"/>
+        <ListView dataSource={this.state.dataSource} renderRow={this.renderRow} enableEmptySections={true}/>
+        <ListView dataSource={this.state.dataSource2} renderRow={this.renderRow2} enableEmptySections={true}/>
+          <Button title="Go" onPress={ () => {this.goToApproval()}} />
+      </View>) 
+      )
+      :
+    ( this.state.ready == 0 ?
+     (<View>
+        <Text style={styles.title}>
+          Approve or Reject these Voters {this.state.playerName}
+        </Text>
+        <ListView dataSource={this.state.dataSource2} renderRow={this.renderRow2} enableEmptySections={true}/>
       </View>)
-    
+     :
+      (<View>
+        <Text style={styles.title}>
+          Approve or Reject these Voters {this.state.playerName}
+        </Text>
+        <ListView dataSource={this.state.dataSource2} renderRow={this.renderRow2} enableEmptySections={true}/>
+          <Button title="Approve" onPress={ () => {this.approveVoters()}}/>
+          <Button title="Reject" onPress={ () => {this.rejectVoters()}}/>
+      </View>)
+    )
     return (
       <View style={styles.container}>
         { headerTitle }
