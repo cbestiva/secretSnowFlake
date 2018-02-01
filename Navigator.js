@@ -14,6 +14,7 @@ import PlayersScreen from './components/PlayersScreen';
 import Reveal from './components/RevealScreen';
 import Choosing from './components/ChoosingScreen';
 import Approval from './components/ApprovalScreen';
+import Voter from './components/VoterScreen';
 
 const MainNavigator = StackNavigator({
   Home: {
@@ -62,6 +63,12 @@ const MainNavigator = StackNavigator({
     screen: Approval,
     navigationOptions: {
       headerTitle: 'Approvals and Rejections'
+    }
+  },
+  Voter: {
+    screen: Voter,
+    navigationOptions: {
+      headerTitle: 'Mission Votes'
     }
   }
 });

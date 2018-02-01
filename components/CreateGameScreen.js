@@ -51,19 +51,19 @@ export default class CreateGameScreen extends Component {
           break;
       case '7':
           this.state.charsString = '0,0,0,1,1,1,1'
-          this.state.missions = '2,3,3,4*,4'
+          this.state.missions = '2,3,3,6,4'
           break;
       case '8':
           this.state.charsString = '0,0,0,1,1,1,1,1'
-          this.state.missions = '3,4,4,5*,5'
+          this.state.missions = '3,4,4,7,5'
           break;
       case '9':
           this.state.charsString = '0,0,0,1,1,1,1,1,1'
-          this.state.missions = '3,4,4,5*,5'
+          this.state.missions = '3,4,4,7,5'
           break;
       case '10':
           this.state.charsString = '0,0,0,0,1,1,1,1,1,1'
-          this.state.missions = '3,4,4,5*,5'
+          this.state.missions = '3,4,4,7,5'
           break;
     }
 //     alert(this.state.charsString + ' ' + this.state.missions)

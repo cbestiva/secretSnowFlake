@@ -29,9 +29,11 @@ export default class ChoosingScreen extends Component {
       gameName: this.props.navigation.state.params.gameName,
       chooser: 0,
       missionTotal: null,
+      adjustedMissionTotal: null,
       ready: 0,
-      missionNumber: null,
-      readyLabel: ''
+      missionNumber: 1,
+      readyLabel: '',
+      missions: [2,3,2,3,3]
     }
     this.itemsRef = this.getRef().child('photos')
     this.stateRef = this.getRef().child('states')
@@ -48,21 +50,32 @@ export default class ChoosingScreen extends Component {
   }
   
   componentWillMount() {
-    
-    this.stateRef.child(`${this.state.gameName}/selectionReady/val`).on("value", (snapshot) =>{
+   
+     this.stateRef.child(`${this.state.gameName}/selectionReady/val`).on("value", (snapshot) =>{
       this.setState({
         ready: snapshot.val()
       })
     })
                                                               
     this.stateRef.child(`${this.state.gameName}/missions`).on("value", (snapshot) =>{
-      let missions = snapshot.val().split()
-      let missionNumber
+      let missions =  snapshot.val().split(',')
+      this.setState({
+        missions : missions
+      })
       this.stateRef.child(`${this.state.gameName}/missionChooser/missionNumber`).on("value", (snapshot2) =>{
-        missionNumber = snapshot2.val()
+        let missionNumber = snapshot2.val()
+        let missionTotal = this.state.missions[missionNumber]
+        let adjustedMissionTotal
+        if(missionTotal>5){
+          adjustedMissionTotal = missionTotal - 2
+        }else{
+          adjustedMissionTotal = missionTotal
+        }
+        
         this.setState({
           missionNumber: missionNumber,
-          missionTotal: missions[0][missionNumber][0]
+          missionTotal: missionTotal,
+          adjustedMissionTotal: adjustedMissionTotal
         })
       })
     })
@@ -152,7 +165,7 @@ export default class ChoosingScreen extends Component {
     // add logic that makes it do this only if they're the chooser
     if(this.state.chooser==1){
         this.stateRef.child(`${this.state.gameName}/voters`).on('value', (snapshot) =>{ 
-       if(this.state.missionTotal == snapshot.numChildren()){
+       if(this.state.adjustedMissionTotal == snapshot.numChildren()){
          this.setState({
            readyLabel: 'Ready to Go!'
          })
@@ -161,7 +174,7 @@ export default class ChoosingScreen extends Component {
         })
        }else{
          this.setState({
-           readyLabel:`Need ${this.state.missionTotal} voters selected chooser flag ${this.state.chooser}`
+           readyLabel:`Need ${this.state.adjustedMissionTotal} voters selected chooser flag ${this.state.chooser}`
          })
          this.stateRef.child(`${this.state.gameName}/selectionReady`).set({
            val: 0
@@ -188,7 +201,8 @@ export default class ChoosingScreen extends Component {
           {
           gameName: this.state.gameName,
           player: this.state.playerName,
-          missionNumber: this.state.missionNumber
+          missionNumber: this.state.missionNumber,
+          missionTotal: this.state.missionTotal
           }                            
           )
     
@@ -205,7 +219,8 @@ export default class ChoosingScreen extends Component {
           {
             gameName: this.state.gameName,
             player: this.state.playerName,
-          missionNumber: this.state.missionNumber
+          missionNumber: this.state.missionNumber,
+          missionTotal: this.state.missionTotal
           })
   }
   
@@ -220,7 +235,8 @@ export default class ChoosingScreen extends Component {
           {
             gameName: this.state.gameName,
             player: this.state.playerName,
-          missionNumber: this.state.missionNumber
+          missionNumber: this.state.missionNumber,
+          missionTotal: this.state.missionTotal
           })
   }
   
@@ -277,7 +293,7 @@ export default class ChoosingScreen extends Component {
       ( this.state.ready == 0 ?  
        (<View>
         <Text style={styles.title}>
-          Choose {this.state.missionTotal} people for the mission {this.state.playerName}
+          Choose {this.state.adjustedMissionTotal} people for the mission {this.state.playerName}
           {"\n"}{this.state.readyLabel}
         </Text>
         <ListView dataSource={this.state.dataSource} renderRow={this.renderRow} enableEmptySections={true}/>
@@ -289,8 +305,7 @@ export default class ChoosingScreen extends Component {
       (
       <View>
         <Text style={styles.title}>
-          Choose {this.state.missionTotal} people for the mission {this.state.playerName}
-          {"\n"}{this.state.readyLabel}
+          Choose {this.state.adjustedMissionTotal} people for the mission {this.state.playerName}
         </Text>
         <ListView dataSource={this.state.dataSource} renderRow={this.renderRow} enableEmptySections={true}/>
         <ListView dataSource={this.state.dataSource2} renderRow={this.renderRow2} enableEmptySections={true}/>

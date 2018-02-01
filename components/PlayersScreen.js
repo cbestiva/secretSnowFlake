@@ -214,6 +214,28 @@ componentWillMount() {
       this.stateRef.child(`${this.state.gameName}/selectionReady`).set({
        val: 0
     })
+    
+    this.stateRef.child(`${this.state.gameName}/Score`).set({
+       Bad: 0,
+       Good: 0
+    })
+    
+    this.stateRef.child(`${this.state.gameName}/totalVotes`).set({
+       val: 0
+    })
+    
+    this.stateRef.child(`${this.state.gameName}/revealedCount`).set({
+       val: 0
+    })
+    
+    this.stateRef.child(`${this.state.gameName}/chooserRevealed`).set({
+       val: 0
+    })
+    
+    this.stateRef.child(`${this.state.gameName}/votes`).set({
+       pass: 0,
+       fail: 0
+    })
       
     }
 //     alert(mixedArray+ ' ' + `${this.state.creator}`)

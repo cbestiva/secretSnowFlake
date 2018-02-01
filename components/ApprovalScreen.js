@@ -9,6 +9,8 @@ import {
   Image
 } from 'react-native';
 
+import { NavigationActions } from 'react-navigation';
+
 import * as firebase from 'firebase';
 import FirebaseApp from '../FirebaseApp';
 
@@ -27,7 +29,7 @@ export default class ApprovalScreen extends Component {
       dataSource: ds,
       dataSource2: ds2,
       gameName: this.props.navigation.state.params.gameName,
-      missionTotal: this.props.navigation.state.params.missionsTotal,
+      missionTotal: this.props.navigation.state.params.missionTotal,
       rePick: 0,
       Play: 0,
       creator: '',
@@ -288,7 +290,7 @@ export default class ApprovalScreen extends Component {
       {
         gameName: this.state.gameName, 
         player: this.state.playerName,
-        missionTotal: this.state.totalPlayers,
+        missionTotal: this.state.missionTotal,
         missionNumber: this.state.missionNumber
         
       })
@@ -296,19 +298,36 @@ export default class ApprovalScreen extends Component {
   
   goToVotes(){
     
+//     const resetAction = NavigationActions.reset({
+//     index: 0,
+//     key: null,
+//     actions: [
+//       NavigationActions.navigate({routeName: 'Voter', params: {gameName: this.state.gameName, player: this.state.playerName, missionTotal: this.state.missionTotal, missionNumber: this.state.missionNumber}})
+//     ]
+//   })
+  
+//   this.props.navigation.dispatch(resetAction);
+    
+    this.props.navigation.navigate(
+    'Voter',
+    {
+      gameName: this.state.gameName,
+      player: this.state.playerName,
+      missionTotal: this.state.missionTotal,
+      missionNumber: this.state.missionNumber
+    })
   }
   
   render() {
     const NextButton = this.state.Play == 1 || this.state.rePick == 1 
       ? (this.state.rePick == 1 
          ? <Button title="Re-Pick" onPress={ () => {this.rePickVoters()}}/> 
-         : <Button title="Play" onPress={ () => {}}/>) 
+         : <Button title="Play" onPress={ () => {this.goToVotes()}}/>) 
       : (<Button title="Waiting for Votes" onPress={ () => {}}/>)
     return (
       <View style={styles.container}>
         <Text style={styles.title}>
           People who Approve the Voters {this.state.playerName}
-          {"\n"}{this.state.chooserKey}
         </Text>
         <ListView dataSource={this.state.dataSource} renderRow={this.renderRow} enableEmptySections={true}/>
         <Text style={styles.title}>
