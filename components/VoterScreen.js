@@ -13,10 +13,14 @@ import { NavigationActions } from 'react-navigation';
 import * as firebase from 'firebase';
 import FirebaseApp from '../FirebaseApp';
 
+const groupByEveryN = require('groupByEveryN');
+
 export default class VoterScreen extends Component {
   constructor(props){
     super(props);
+    let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
+      dataSource: ds,
       playerName: this.props.navigation.state.params.player,
       voter: 0,
       gameName: this.props.navigation.state.params.gameName,
@@ -37,10 +41,13 @@ export default class VoterScreen extends Component {
       gameOver: 0,
       gameOverText: '',
       alreadyVoted: 0,
-      votedText: ''
+      votedText: '',
+      badGuysWin: 0,
+      goodGuysWin: 0
     }
     this.itemsRef = this.getRef().child('photos')
     this.stateRef = this.getRef().child('states')
+    this.renderRow = this.renderRow.bind(this)
   }
     
   static navigationOptions = {
@@ -52,6 +59,51 @@ export default class VoterScreen extends Component {
   }
   
   componentWillMount() {
+    
+    this.stateRef.child(`${this.state.gameName}/evilPeople`).on("value", (snapshot) => {
+      let evilList = []
+     snapshot.forEach((child) => {
+      evilList.push(child.key)
+    })
+     if(this.state.badGuysWin == 1){
+       this.itemsRef.child(this.state.gameName).on('value', (snapshot) => {
+    let dataArray = [];
+    snapshot.forEach((child) => {
+      if(evilList.includes(child.key)){
+      dataArray.push({
+        name: child.key,
+        image: child.val().img
+      })
+      }
+    })
+  this.setState({
+    dataSource: this.state.dataSource.cloneWithRows(groupByEveryN(dataArray,2)),
+    photos: dataArray,
+  })
+  },
+    (errObj) => console.log('The read failed: ', errObj.code)
+         )
+     }else{
+      this.itemsRef.child(this.state.gameName).on('value', (snapshot) => {
+    let dataArray = [];
+    snapshot.forEach((child) => {
+      if(!evilList.includes(child.key)){
+      dataArray.push({
+        name: child.key,
+        image: child.val().img
+      })
+      }
+    })
+  this.setState({
+    dataSource: this.state.dataSource.cloneWithRows(groupByEveryN(dataArray,2)),
+    photos: dataArray,
+  })
+  },
+    (errObj) => console.log('The read failed: ', errObj.code)
+         )}
+      
+  })
+
     this.stateRef.child(`${this.state.gameName}/revealedCount/val`).on('value', (revealedSnap) => {
       this.setState({
         revealedCount: revealedSnap.val()
@@ -111,6 +163,7 @@ export default class VoterScreen extends Component {
       if(badScoreSnap.val()>2){
         this.setState({
           gameOver: 1,
+          badGuysWin: 1,
           gameOverText: 'Bad Guys Win!'
         })
       }
@@ -120,6 +173,7 @@ export default class VoterScreen extends Component {
       if(goodScoreSnap.val()>2){
         this.setState({
           gameOver: 1,
+          goodGuysWin: 1,
           gameOverText: 'Good Guys Win!'
           
         })
@@ -348,6 +402,28 @@ revealVotes(){
   })
 }
   
+  renderRow(rowData: Array<View>, sectionId: string, rowId: string) {
+    let photos = rowData.map((photo, i) => {
+      if (photo === null){
+        return null
+      }
+      return (
+      <View key={photo.name}>
+        <TouchableOpacity activeOpacity = { .5 } 
+          onPress={ () => { }}>
+        <Image style={{height:90, width: 90}}
+          source={{uri: photo.image}} />
+          </TouchableOpacity>
+          <Text>{photo.name}</Text>
+        </View>
+        )
+    })
+    return (
+    <View style={{flex: 1, flexDirection: 'row'}}>
+      {photos}
+      </View>)
+  }
+  
   render() {
     const voterView = this.state.orderNumber == 1 ? 
           (<View style={styles.container}>
@@ -377,7 +453,12 @@ revealVotes(){
                         {nextButton}
                       </View>
           
-    const gameOverView = <View><Text> GAME OVER {"\n"}{"\n"}{this.state.gameOverText}</Text></View>
+    const gameOverView = <View>
+                           <Text> GAME OVER {"\n"}{"\n"}{this.state.gameOverText}</Text>
+                        <ListView
+                          dataSource={this.state.dataSource}
+                          renderRow={this.renderRow}/>
+                        </View>
     const mainView = this.state.gameOver == 1 ? gameOverView : this.state.allVotesIn == 1 ? revealView : this.state.voter == 1 ? voterView : nonVoterView
     //Once reveal
     //Make 2 Options if a voter show vote buttons if not show waiting button with reveal after voters voted

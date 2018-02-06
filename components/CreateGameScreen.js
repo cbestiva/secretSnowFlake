@@ -35,6 +35,31 @@ export default class CreateGameScreen extends Component {
     return FirebaseApp.database().ref();
   }
   
+  makeRoomId() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  for (var i = 0; i < 5; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    
+  this.itemsRef.child(text).on('value', (snapshot) => {
+    if(snapshot.val()==null){
+      this.setState({
+    room: text
+  })
+    }else{
+      this.makeRoomId()
+    }
+  })
+
+}
+  
+  componentWillMount(){
+     this.makeRoomId()
+
+  }
+  
   createGame(e) {
     e.preventDefault()
     // Add Game Room and player to firebase
@@ -71,7 +96,8 @@ export default class CreateGameScreen extends Component {
       charsString: `${this.state.charsString}`,
       missions: `${this.state.missions}`,
       players: `${this.state.numOfPlayers}`,
-      creatorName: `${this.state.name}`
+      creatorName: `${this.state.name}`,
+      createdDate: `${new Date().toISOString()}`
     })
     this.itemsRef.child(`${this.state.room}/readyFlag`).set({
       val: 0
@@ -91,14 +117,15 @@ export default class CreateGameScreen extends Component {
     return(
       <View style={styles.container}>
         <Text style={styles.title}>
-          Create a Room
+          Game Room Name
         </Text>
-        <TextInput
+        <Text style={fontSize=25}>{this.state.room}</Text>
+        {/*<TextInput
           style={styles.input}
           placeholder='Game Room Name'
           onChangeText={(room) => this.setState({room})}
           value={this.state.room}
-        />
+        />*/}
         <Text style={styles.title}>
           Enter Your Name
         </Text>

@@ -96,9 +96,7 @@ export default class RevealScreen extends Component {
       return (
       <View key={photo.name}>
         <TouchableOpacity activeOpacity = { .5 } 
-          onPress={ () => { 
-              this.pressRow(photo); 
-            }}>
+          onPress={ () => { }}>
         <Image style={{height:90, width: 90}}
           source={{uri: photo.image}} />
           </TouchableOpacity>

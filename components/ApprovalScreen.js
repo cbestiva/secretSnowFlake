@@ -212,9 +212,7 @@ export default class ApprovalScreen extends Component {
       return (
       <View key={photo.name}>
         <TouchableOpacity activeOpacity = { .5 } 
-          onPress={ () => { 
-              this.chooseVoter(photo.name, photo.image); 
-            }}>
+          onPress={ () => { }}>
         <Image style={{height:75, width: 75}}
           source={{uri: photo.image}} />
           </TouchableOpacity>
@@ -236,9 +234,7 @@ export default class ApprovalScreen extends Component {
       return (
       <View key={photo.name}>
         <TouchableOpacity activeOpacity = { .5 } 
-          onPress={ () => {
-              this.removeVoter(photo.name);
-            }}>
+          onPress={ () => { }}>
         <Image style={{height:75, width: 75}}
           source={{uri: photo.image}} />
           </TouchableOpacity>
