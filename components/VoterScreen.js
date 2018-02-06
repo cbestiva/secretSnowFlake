@@ -59,50 +59,6 @@ export default class VoterScreen extends Component {
   }
   
   componentWillMount() {
-    
-    this.stateRef.child(`${this.state.gameName}/evilPeople`).on("value", (snapshot) => {
-      let evilList = []
-     snapshot.forEach((child) => {
-      evilList.push(child.key)
-    })
-     if(this.state.badGuysWin == 1){
-       this.itemsRef.child(this.state.gameName).on('value', (snapshot) => {
-    let dataArray = [];
-    snapshot.forEach((child) => {
-      if(evilList.includes(child.key)){
-      dataArray.push({
-        name: child.key,
-        image: child.val().img
-      })
-      }
-    })
-  this.setState({
-    dataSource: this.state.dataSource.cloneWithRows(groupByEveryN(dataArray,2)),
-    photos: dataArray,
-  })
-  },
-    (errObj) => console.log('The read failed: ', errObj.code)
-         )
-     }else{
-      this.itemsRef.child(this.state.gameName).on('value', (snapshot) => {
-    let dataArray = [];
-    snapshot.forEach((child) => {
-      if(!evilList.includes(child.key)){
-      dataArray.push({
-        name: child.key,
-        image: child.val().img
-      })
-      }
-    })
-  this.setState({
-    dataSource: this.state.dataSource.cloneWithRows(groupByEveryN(dataArray,2)),
-    photos: dataArray,
-  })
-  },
-    (errObj) => console.log('The read failed: ', errObj.code)
-         )}
-      
-  })
 
     this.stateRef.child(`${this.state.gameName}/revealedCount/val`).on('value', (revealedSnap) => {
       this.setState({
@@ -166,6 +122,7 @@ export default class VoterScreen extends Component {
           badGuysWin: 1,
           gameOverText: 'Bad Guys Win!'
         })
+        this.loadEvilPhotos()
       }
     })
     
@@ -175,8 +132,8 @@ export default class VoterScreen extends Component {
           gameOver: 1,
           goodGuysWin: 1,
           gameOverText: 'Good Guys Win!'
-          
         })
+      this.loadGoodPhotos()
       }
     })
     
@@ -202,6 +159,58 @@ export default class VoterScreen extends Component {
       this.setState({voter: 1})
     }
     })
+}
+  
+loadEvilPhotos(){
+  this.stateRef.child(`${this.state.gameName}/evilPeople`).on("value", (snapshot) => {
+      let evilList = []
+     snapshot.forEach((child) => {
+      evilList.push(child.key)
+    })
+       this.itemsRef.child(this.state.gameName).on('value', (snapshot) => {
+    let dataArray = [];
+    snapshot.forEach((child) => {
+      if(evilList.includes(child.key)){
+      dataArray.push({
+        name: child.key,
+        image: child.val().img
+      })
+      }
+    })
+  this.setState({
+    dataSource: this.state.dataSource.cloneWithRows(groupByEveryN(dataArray,2)),
+    photos: dataArray,
+  })
+  },
+    (errObj) => console.log('The read failed: ', errObj.code)
+         )
+  })
+}
+  
+loadGoodPhotos(){
+  this.stateRef.child(`${this.state.gameName}/evilPeople`).on("value", (snapshot) => {
+      let evilList = []
+     snapshot.forEach((child) => {
+      evilList.push(child.key)
+    })
+      this.itemsRef.child(this.state.gameName).on('value', (snapshot) => {
+    let dataArray = [];
+    snapshot.forEach((child) => {
+      if(!evilList.includes(child.key)){
+      dataArray.push({
+        name: child.key,
+        image: child.val().img
+      })
+      }
+    })
+  this.setState({
+    dataSource: this.state.dataSource.cloneWithRows(groupByEveryN(dataArray,2)),
+    photos: dataArray,
+  })
+  },
+    (errObj) => console.log('The read failed: ', errObj.code)
+         )
+  })
 }
   
 votePass(){
