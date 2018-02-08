@@ -9,6 +9,7 @@ import {
   Image
 } from 'react-native';
 
+import { NavigationActions } from 'react-navigation';
 import * as firebase from 'firebase';
 import FirebaseApp from '../FirebaseApp';
 
@@ -112,12 +113,16 @@ export default class RevealScreen extends Component {
   
   render() {
     const playButton = ( <Button title="Play"
-                              onPress={() => this.props.navigation.navigate('Choosing', 
-      {
-        gameName: this.state.gameName, 
-        player: this.state.playerName
-      }
-                                                       )}/>)
+                              onPress={() => {
+        
+        const resetAction = NavigationActions.reset({
+    index: 0,
+    key: null,
+    actions: [NavigationActions.navigate({routeName: 'Choosing', params: {gameName: this.state.gameName, player: this.state.playerName}})
+    ]
+  })
+  
+  this.props.navigation.dispatch(resetAction)}}/>)
     const headerTitle = this.state.good == 1 ? (<Text style={styles.title}>
           You're Good
         </Text>) 

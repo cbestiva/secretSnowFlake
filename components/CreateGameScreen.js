@@ -102,6 +102,7 @@ export default class CreateGameScreen extends Component {
     this.itemsRef.child(`${this.state.room}/readyFlag`).set({
       val: 0
     })
+    
     this.props.navigation.navigate(
       'Camera', 
       {

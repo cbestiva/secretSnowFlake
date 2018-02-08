@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 
 import { NavigationActions } from 'react-navigation';
-
 import * as firebase from 'firebase';
 import FirebaseApp from '../FirebaseApp';
 
@@ -281,15 +280,20 @@ export default class ApprovalScreen extends Component {
     }
     // Go back to choosing screen with the new chooser
     // Delete the voters list 
-     this.props.navigation.navigate(
-      'Choosing', 
-      {
-        gameName: this.state.gameName, 
+    
+    const resetAction = NavigationActions.reset({
+    index: 0,
+    key: null,
+    actions: [NavigationActions.navigate({routeName: 'Choosing', params: {
+          gameName: this.state.gameName, 
         player: this.state.playerName,
         missionTotal: this.state.missionTotal,
         missionNumber: this.state.missionNumber
-        
-      })
+          } })
+    ]
+  })
+  
+  this.props.navigation.dispatch(resetAction)
   }
   
   goToVotes(){
@@ -304,14 +308,19 @@ export default class ApprovalScreen extends Component {
   
 //   this.props.navigation.dispatch(resetAction);
     
-    this.props.navigation.navigate(
-    'Voter',
-    {
+    const resetAction = NavigationActions.reset({
+    index: 0,
+    key: null,
+    actions: [NavigationActions.navigate({routeName: 'Voter', params: {
       gameName: this.state.gameName,
       player: this.state.playerName,
       missionTotal: this.state.missionTotal,
       missionNumber: this.state.missionNumber
-    })
+          } })
+    ]
+  })
+  
+  this.props.navigation.dispatch(resetAction)
   }
   
   render() {

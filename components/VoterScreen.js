@@ -294,10 +294,9 @@ rePick(){
   })
   // Go to Chooser Page
   const resetAction = NavigationActions.reset({
-    index: 1,
+    index: 0,
     key: null,
-    actions: [NavigationActions.navigate({routeName: 'Voter', params: {gameName: this.state.gameName, player: this.state.playerName, missionTotal: this.state.missionTotal, missionNumber: this.state.missionNumber}}),
-      NavigationActions.navigate({routeName: 'Choosing', params: {gameName: this.state.gameName, player: this.state.playerName, missionNumber: this.state.missionNumber}})
+    actions: [NavigationActions.navigate({routeName: 'Choosing', params: {gameName: this.state.gameName, player: this.state.playerName, missionNumber: this.state.missionNumber}})
     ]
   })
   

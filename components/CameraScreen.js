@@ -7,6 +7,8 @@ import {
   Button,
   Vibration
 } from 'react-native';
+
+import { NavigationActions } from 'react-navigation';
 import ImagePicker from 'react-native-image-crop-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
 import * as firebase from 'firebase';
@@ -97,14 +99,18 @@ export default class SignInScreen extends Component {
         />
         <Button
           style={styles.title}
-          onPress={() =>
+          onPress={() => {
+          
+      // change this code to go with no back button
       
-          this.props.navigation.navigate('Players',
-          {
-            gameName: state.params.game,
-            creator: state.params.creator,
-            player: state.params.player
-          })}
+      const resetAction = NavigationActions.reset({
+    index: 0,
+    key: null,
+    actions: [NavigationActions.navigate({routeName: 'Players', params: {gameName: state.params.game, player: state.params.player, creator: state.params.creator}})
+    ]
+  })
+  
+  this.props.navigation.dispatch(resetAction)}}
           title='Play'
         />
       </View>

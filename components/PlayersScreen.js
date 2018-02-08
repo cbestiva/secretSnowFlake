@@ -10,6 +10,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 
+import { NavigationActions } from 'react-navigation';
 import * as firebase from 'firebase';
 import FirebaseApp from '../FirebaseApp';
 
@@ -235,13 +236,16 @@ componentWillMount() {
   }
   
   revealChars(){
-    this.props.navigation.navigate(
-      'Reveal', 
-      {
-        gameName: `${this.state.gameName}`,
-        player: `${this.state.player}`
-        
-      })
+    
+    const resetAction = NavigationActions.reset({
+    index: 0,
+    key: null,
+    actions: [NavigationActions.navigate({routeName: 'Reveal', params: {gameName: this.state.gameName, player: this.state.player}})
+    ]
+  })
+  
+  this.props.navigation.dispatch(resetAction)
+
   }
   
 //   generateRandomNumber()=>

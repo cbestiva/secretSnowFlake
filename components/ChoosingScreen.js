@@ -9,6 +9,7 @@ import {
   Image
 } from 'react-native';
 
+import { NavigationActions } from 'react-navigation';
 import * as firebase from 'firebase';
 import FirebaseApp from '../FirebaseApp';
 
@@ -28,6 +29,7 @@ export default class ChoosingScreen extends Component {
       dataSource2: ds2,
       gameName: this.props.navigation.state.params.gameName,
       chooser: 0,
+      chooserName: '',
       missionTotal: null,
       adjustedMissionTotal: null,
       ready: 0,
@@ -82,6 +84,9 @@ export default class ChoosingScreen extends Component {
     
     this.stateRef.child(`${this.state.gameName}/missionChooser/val`).on("value", (snapshot) => {
       let chooser = snapshot.val()
+      this.setState({
+        chooserName: chooser
+      })
         if(this.state.playerName == chooser){
           this.setState({
             chooser: 1
@@ -197,14 +202,20 @@ export default class ChoosingScreen extends Component {
     this.setState({
       chooser: 0
     })
-     this.props.navigation.navigate('Approval',
-          {
+    
+    const resetAction = NavigationActions.reset({
+    index: 0,
+    key: null,
+    actions: [NavigationActions.navigate({routeName: 'Approval', params: {
           gameName: this.state.gameName,
           player: this.state.playerName,
           missionNumber: this.state.missionNumber,
           missionTotal: this.state.missionTotal
-          }                            
-          )
+          } })
+    ]
+  })
+  
+  this.props.navigation.dispatch(resetAction)
     
   }
   
@@ -215,13 +226,19 @@ export default class ChoosingScreen extends Component {
          })
     })
     
-    this.props.navigation.navigate('Approval',
-          {
-            gameName: this.state.gameName,
-            player: this.state.playerName,
+    const resetAction = NavigationActions.reset({
+    index: 0,
+    key: null,
+    actions: [NavigationActions.navigate({routeName: 'Approval', params: {
+          gameName: this.state.gameName,
+          player: this.state.playerName,
           missionNumber: this.state.missionNumber,
           missionTotal: this.state.missionTotal
-          })
+          } })
+    ]
+  })
+  
+  this.props.navigation.dispatch(resetAction)
   }
   
     rejectVoters(){
@@ -231,13 +248,19 @@ export default class ChoosingScreen extends Component {
          })
     })
       
-    this.props.navigation.navigate('Approval',
-          {
-            gameName: this.state.gameName,
-            player: this.state.playerName,
+    const resetAction = NavigationActions.reset({
+    index: 0,
+    key: null,
+    actions: [NavigationActions.navigate({routeName: 'Approval', params: {
+          gameName: this.state.gameName,
+          player: this.state.playerName,
           missionNumber: this.state.missionNumber,
           missionTotal: this.state.missionTotal
-          })
+          } })
+    ]
+  })
+  
+  this.props.navigation.dispatch(resetAction)
   }
   
   renderRow(rowData: Array<View>, sectionId: string, rowId: string) {
@@ -317,6 +340,7 @@ export default class ChoosingScreen extends Component {
      (<View>
         <Text style={styles.title}>
           Approve or Reject these Voters {this.state.playerName}
+          {'\n'}The mission chooser is {this.state.chooserName}
         </Text>
         <ListView dataSource={this.state.dataSource2} renderRow={this.renderRow2} enableEmptySections={true}/>
       </View>)
@@ -324,6 +348,7 @@ export default class ChoosingScreen extends Component {
       (<View>
         <Text style={styles.title}>
           Approve or Reject these Voters {this.state.playerName}
+          {'\n'}The mission chooser is {this.state.chooserName}
         </Text>
         <ListView dataSource={this.state.dataSource2} renderRow={this.renderRow2} enableEmptySections={true}/>
           <Button title="Approve" onPress={ () => {this.approveVoters()}}/>
