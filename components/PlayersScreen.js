@@ -27,7 +27,7 @@ export default class PlayersScreen extends Component {
       playerCnt: null,
       playersNeeded: null,
       rolesArray: null,
-      creator: this.props.navigation.state.params.creator,
+      creator: 0,
       player: this.props.navigation.state.params.player,
       readyFlag: 0
     }
@@ -62,6 +62,14 @@ export default class PlayersScreen extends Component {
 //   }
   
 componentWillMount() {
+  
+  this.stateRef.child(`${this.state.gameName}/creatorName`).on("value", (snapshot) => {
+    if(snapshot.val()==this.state.player){
+      this.setState({
+        creator: 1
+      })
+    }
+  })
   
   this.stateRef.child(`${this.state.gameName}/readyFlag/val`).on("value", (snapshot) => {
         this.setState({
@@ -115,21 +123,6 @@ componentWillMount() {
          )
 }
   
-  componentDidUpdate() {
-//     let playersNeeded = 0
-//     let playersNeeded
-//     let playerCnt
-    
-//     this.stateRef.child(`${this.state.gameName}/players`).on("value", (snapshot) => {
-//         playersNeeded = snapshot.val()
-//     })
-//     this.itemsRef.child(`${this.state.gameName}`).on('value', (snapshot) =>{ 
-//        playerCnt = snapshot.numChildren()
-//     })
-  
-//     alert(this.state.playersNeeded + ' ' + this.state.playerCnt)
-  }
-  
 //   getItems(itemsRef) {
 //       itemsRef.on('value', (snap) => {
 //         let items = [];
@@ -147,9 +140,9 @@ componentWillMount() {
 //   }
 
   pressRow(photo){
-    console.log(photo)
-    console.log(`${this.state.gameName}/photo.name`)
+    if(this.state.creator == 1){
   this.itemsRef.child(`${this.state.gameName}/`+photo.name).remove();
+    }
   }
   
   showChildrenCount(item){
@@ -308,6 +301,7 @@ componentWillMount() {
     )
     return(
       <View style={styles.container}>
+        <Text>Room Name: {this.state.gameName}</Text>
         <ListView
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}/>
